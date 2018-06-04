@@ -77,13 +77,24 @@
     )
   )
 
-;; (defn version-properties
-;;   "Returns a map containing
-;;   :completness
-;;   :initial date
-;;   :due date
-;;   "
-;;   [redmine-url project-id version-id]
-;;   )
+(defn version-properties-summary
+  "Returns a map containing
+  :project
+  :version name
+  :due date
+  :status
+  :updated_on
+  "
+  [redmine-url project-id version-id]
+  (let [version-prop (get (list-project-versions redmine-url project-id) version-id)]
+    (hash-map
+     :name version-id,
+     :project project-id,
+     :due (get version-prop "due_date"),
+     :status (get version-prop "status"),
+     :updated_on 
+     )
+    )
+  )
 
 (prn (list-project-versions "http://localhost:10083" "t_project"))
