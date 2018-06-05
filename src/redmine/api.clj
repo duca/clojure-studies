@@ -60,7 +60,7 @@
     )
   )
 
-(defn list-project-versions
+(defn fetch-project-versions
   " Check if a given project id exists then returns a map with version {version_name version_json}"
   [redmine-url project-id]
   (if (not (project-exists? redmine-url project-id))
@@ -77,6 +77,33 @@
     )
   )
 
+(defn fetch-project-issues
+  "Returns a map containing all the issues organized by
+  :name
+  :status
+  :version
+  :start_date
+  :end_date
+  Paging example:
+  GET /issues.xml?offset=0&limit=100
+  GET /issues.xml?offset=100&limit=100
+
+  preciso pensar no esquema de paginacao e incluir outras paradas na url (talvez so limitar essas funcoes a geracao de url)
+  "
+  [redmine-url project-id]
+    (let [raw_issues
+        (http-resp-body (format (:project-issues (generate-base-url redmine-url)) project-id)
+                        )]
+      (println (get raw_issues "issues"))
+    ;; (reduce
+    ;;  (fn [initial item]
+    ;;    (into initial (hash-map (get item "name"), item))
+    ;;    )
+    ;;  {} (get raw_versions "versions")
+    ;;  )
+    )
+  )
+
 (defn version-properties-summary
   "Returns a map containing
   :project
@@ -86,7 +113,7 @@
   :updated_on
   "
   [redmine-url project-id version-id]
-  (let [version-prop (get (list-project-versions redmine-url project-id) version-id)]
+  (let [version-prop (get (fetch-project-versions redmine-url project-id) version-id)]
     (hash-map
      :name version-id,
      :project project-id,
@@ -97,4 +124,4 @@
     )
   )
 
-(prn (list-project-versions "http://localhost:10083" "t_project"))
+(prn (fetch-project-issues "http://localhost:10083" "t_project"))
