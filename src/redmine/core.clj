@@ -2,6 +2,7 @@
   (:gen-class)
   (:require
    [redmine.api :refer :all]
+   [redmine.url_defs :refer :all]
    [cheshire.core :refer :all]
    [clj-http.client :as client]
    ))

@@ -119,9 +119,25 @@
      :project project-id,
      :due (get version-prop "due_date"),
      :status (get version-prop "status"),
-     :updated_on 
+     :updated_on
      )
     )
   )
 
+(defn get-project-id
+  "Returns the project id"
+  [redmine-url name]
+  (let [items (get (list-projects redmine-url) "projects")]
+    (let [results (filter #(= name (get % "name")) items)]
+      (if (> (count results) 0)
+        (get (nth results 0) "id")
+        ""
+        )
+      )
+    )
+  )
+
+(prn "----------------")
 (prn (fetch-project-issues "http://localhost:10083" "t_project"))
+(prn "----------------")
+(prn (get-project-id "http://127.0.0.1:10083" "t_project"))
